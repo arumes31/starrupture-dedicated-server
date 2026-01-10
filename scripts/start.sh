@@ -43,8 +43,25 @@ echo " "
 echo "Configuring StarRupture Dedicated Server ..."
 echo " "
 
+# silence WINE
+export WINEDEBUG=${WINEDEBUG:- -all}
+
 SERVER_PORT=${SERVER_PORT:-7777}
 echo "Using port: $SERVER_PORT"
+
+if [[ "${USE_DSSETTINGS}" == "true" ]] || [[ "${USE_DSSETTINGS}" == "1" ]]; then
+  echo "DSSettings handling enabled."
+  first_save_dir=$(find "$savegame_files" -mindepth 1 -maxdepth 1 -type d | head -n 1)
+
+  if [ -d "$first_save_dir" ]; then
+    echo "Found savegame folder: $first_save_dir"
+    cp "/home/container/scripts/DSSettings.txt" "$server_files/DSSettings.txt"
+    session_name=$(basename "$first_save_dir")
+    sed -i "s/\"SessionName\": \".*\"/\"SessionName\": \"$session_name\"/" "$server_files/DSSettings.txt"
+  else
+    echo "No savegame subfolder found yet."
+  fi
+fi
 
 echo " "
 echo "Launching StarRupture Dedicated Server"

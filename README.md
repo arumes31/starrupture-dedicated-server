@@ -12,6 +12,7 @@ This is a Docker container to help you get started with hosting your own [StarRu
 ## Info
 
 - Start the image with the wished port (7777 by default) and then connect ingame to start a game and set passwords.
+- The gameplay will use UDP protocol, the manage server functionality will use TCP.
 - This image uses the pterodactyl/wine yolk [Ptero-Eggs](https://github.com/ptero-eggs/) as it was the only thing working. Thank you guys for your work!
 
 | Volume   | Path                                                     | Description                                                                                                    |
@@ -55,9 +56,10 @@ services:
 
 You can use these environment variables for your server settings:
 
-| Variable    | Default               | Description                                        |
-|-------------|-----------------------|----------------------------------------------------|
-| SERVER_PORT | 7777                  | The port that clients will connect to for gameplay |
+| Variable       | Default | Description                                                         |
+|----------------|---------|---------------------------------------------------------------------|
+| SERVER_PORT    | 7777    | The port that clients will connect to for gameplay                  |
+| USE_DSSETTINGS | false   | Set to true if you want a DSSettings.txt (auto-start) to be created |
 
 ## Links
 Github [https://github.com/struppinet/starrupture-dedicated-server](https://github.com/struppinet/starrupture-dedicated-server)  
