@@ -13,12 +13,20 @@ This is a Docker container to help you get started with hosting your own [StarRu
 
 - Start the image with the wished port (7777 by default) and then connect ingame to start a game and set passwords.
 - The gameplay will use UDP protocol, the manage server functionality will use TCP.
+- Assuming you want to auto-load the savegame then enable the USE_DSSETTINGS environment variable.
 - This image uses the pterodactyl/wine yolk [Ptero-Eggs](https://github.com/ptero-eggs/) as it was the only thing working. Thank you guys for your work!
 
 | Volume   | Path                                                     | Description                                                                                                    |
 |----------|----------------------------------------------------------|----------------------------------------------------------------------------------------------------------------|
 | savegame | /home/container/server_files/StarRupture/Saved/SaveGames | The path where the savegame will be                                                                            |
 | server   | /home/container/server_files                             | The path where steam will install the starrupture dedicated server (optional to store to avoid re-downloading) |
+
+## Getting started
+
+- Configure and start the container
+- Connect to the server via "Manage Server" in-game (you will need the IP address of the server, no DNS :( )
+- Set the password for the server and create a new session (new savegame) with optional a session password
+- If you set the USE_DSSETTINGS environment variable the scripts will add a DSSettings.txt which will auto-load the savegame on next restart of the server
 
 ## Docker Run
 
@@ -30,6 +38,7 @@ docker run -d \
     -v ./savegame:"/home/container/server_files/StarRupture/Saved/SaveGames" \
     -v ./server:"/home/container/server_files" \
     -e SERVER_PORT=7777 \
+    -e USE_DSSETTINGS=true \
     struppinet/starrupture-dedicated-server:latest
 ```
 
@@ -43,6 +52,7 @@ services:
     network_mode: bridge
     environment:
       - SERVER_PORT=7777
+      - USE_DSSETTINGS=true
     volumes:
       - './savegame:/home/container/server_files/StarRupture/Saved/SaveGames:rw'
       - './server:/home/container/server_files:rw'
