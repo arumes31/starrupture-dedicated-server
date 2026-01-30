@@ -1,6 +1,6 @@
 FROM ghcr.io/ptero-eggs/yolks:wine_latest
 
-LABEL author="struppi" maintainer="https://github.com/struppinet"
+LABEL author="arumes31" maintainer="https://github.com/arumes31"
 
 # customization
 VOLUME ["/home/container/server_files"]
