@@ -76,6 +76,8 @@ You can use these environment variables for your server settings:
 |----------------|---------|---------------------------------------------------------------------|
 | SERVER_PORT    | 7777    | The port that clients will connect to for gameplay                  |
 | QUERY_PORT     | 27015   | The port used for Steam server queries                              |
+| SERVER_PASSWORD|         | The admin password for managing the server                          |
+| PLAYER_PASSWORD|         | The password required for players to join the session               |
 | USE_DSSETTINGS | false   | Set to true if you want a DSSettings.txt (auto-start) to be created |
 | AUTO_UPDATE    | true    | Set to false to skip SteamCMD update on startup (faster restart)    |
 | VALIDATE_FILES | true    | Set to false to skip file validation during update                  |

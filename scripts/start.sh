@@ -112,6 +112,19 @@ echo "Using Query Port: $QUERY_PORT"
 if [[ "${USE_DSSETTINGS}" == "true" ]] || [[ "${USE_DSSETTINGS}" == "1" ]]; then
   echo "DSSettings handling enabled."
   
+  # Prepare DSSettings.txt from template
+  cp "/home/container/scripts/DSSettings.txt" "$server_files/DSSettings.txt"
+
+  # Update Password and PlayerPassword if env vars are set
+  if [ -n "${SERVER_PASSWORD}" ]; then
+    echo "Setting Server Password..."
+    sed -i "s/\"Password\": \".*\"/\"Password\": \"${SERVER_PASSWORD}\"/" "$server_files/DSSettings.txt"
+  fi
+  if [ -n "${PLAYER_PASSWORD}" ]; then
+    echo "Setting Player Password..."
+    sed -i "s/\"PlayerPassword\": \".*\"/\"PlayerPassword\": \"${PLAYER_PASSWORD}\"/" "$server_files/DSSettings.txt"
+  fi
+
   if [ -d "$savegame_files" ]; then
     # Priority: Check for user-specified 'SaveData.dat'
     # Find the most recently modified SaveData.dat recursively
@@ -124,16 +137,9 @@ if [[ "${USE_DSSETTINGS}" == "true" ]] || [[ "${USE_DSSETTINGS}" == "1" ]]; then
         session_dir=$(dirname "$latest_dat_file")
         session_name=$(basename "$session_dir")
         
-        # Prepare DSSettings.txt
-        cp "/home/container/scripts/DSSettings.txt" "$server_files/DSSettings.txt"
-        
         # Update SessionName and SaveGameName
         sed -i "s/\"SessionName\": \".*\"/\"SessionName\": \"$session_name\"/" "$server_files/DSSettings.txt"
         sed -i "s/\"SaveGameName\": \".*\"/\"SaveGameName\": \"$save_name\"/" "$server_files/DSSettings.txt"
-        
-        # Copy to Binaries folder
-        mkdir -p "$server_files/StarRupture/Binaries/Win64/"
-        cp "$server_files/DSSettings.txt" "$server_files/StarRupture/Binaries/Win64/DSSettings.txt"
         
         echo "DSSettings.txt updated with SaveData.dat."
         
@@ -154,16 +160,9 @@ if [[ "${USE_DSSETTINGS}" == "true" ]] || [[ "${USE_DSSETTINGS}" == "1" ]]; then
             save_name=$(basename "$latest_save_file")
             echo "Found latest save file: $save_name"
             
-            # Prepare DSSettings.txt
-            cp "/home/container/scripts/DSSettings.txt" "$server_files/DSSettings.txt"
-            
             # Update SessionName and SaveGameName
             sed -i "s/\"SessionName\": \".*\"/\"SessionName\": \"$session_name\"/" "$server_files/DSSettings.txt"
             sed -i "s/\"SaveGameName\": \".*\"/\"SaveGameName\": \"$save_name\"/" "$server_files/DSSettings.txt"
-            
-            # Copy to Binaries folder
-            mkdir -p "$server_files/StarRupture/Binaries/Win64/"
-            cp "$server_files/DSSettings.txt" "$server_files/StarRupture/Binaries/Win64/DSSettings.txt"
             
             echo "DSSettings.txt updated with .sav file."
           else
@@ -176,6 +175,11 @@ if [[ "${USE_DSSETTINGS}" == "true" ]] || [[ "${USE_DSSETTINGS}" == "1" ]]; then
   else
     echo "Savegame directory does not exist yet: $savegame_files"
   fi
+
+  # Copy to Binaries folder
+  mkdir -p "$server_files/StarRupture/Binaries/Win64/"
+  cp "$server_files/DSSettings.txt" "$server_files/StarRupture/Binaries/Win64/DSSettings.txt"
+  echo "DSSettings.txt deployed to Binaries folder."
 fi
 
 echo " "
