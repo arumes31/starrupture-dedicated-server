@@ -80,15 +80,44 @@ echo "Using Query Port: $QUERY_PORT"
 
 if [[ "${USE_DSSETTINGS}" == "true" ]] || [[ "${USE_DSSETTINGS}" == "1" ]]; then
   echo "DSSettings handling enabled."
-  first_save_dir=$(find "$savegame_files" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | head -n 1)
+  
+  if [ -d "$savegame_files" ]; then
+    # Find the most recently modified session directory
+    latest_session_path=$(ls -td "$savegame_files"/*/ 2>/dev/null | head -n 1)
 
-  if [ -n "$first_save_dir" ] && [ -d "$first_save_dir" ]; then
-    echo "Found savegame folder: $first_save_dir"
-    cp "/home/container/scripts/DSSettings.txt" "$server_files/DSSettings.txt"
-    session_name=$(basename "$first_save_dir")
-    sed -i "s/\"SessionName\": \".*\"/\"SessionName\": \"$session_name\"/" "$server_files/DSSettings.txt"
+    if [ -n "$latest_session_path" ]; then
+      # Remove trailing slash if present for basename
+      latest_session_path="${latest_session_path%/}"
+      session_name=$(basename "$latest_session_path")
+      echo "Found latest session: $session_name"
+      
+      # Find the latest .sav file inside this session
+      latest_save_file=$(ls -t "$latest_session_path"/*.sav 2>/dev/null | head -n 1)
+      
+      if [ -n "$latest_save_file" ]; then
+        save_name=$(basename "$latest_save_file")
+        echo "Found latest save file: $save_name"
+        
+        # Prepare DSSettings.txt
+        cp "/home/container/scripts/DSSettings.txt" "$server_files/DSSettings.txt"
+        
+        # Update SessionName and SaveGameName
+        sed -i "s/\"SessionName\": \".*\"/\"SessionName\": \"$session_name\"/" "$server_files/DSSettings.txt"
+        sed -i "s/\"SaveGameName\": \".*\"/\"SaveGameName\": \"$save_name\"/" "$server_files/DSSettings.txt"
+        
+        # Copy to Binaries folder as well, as the game likely looks next to the executable
+        mkdir -p "$server_files/StarRupture/Binaries/Win64/"
+        cp "$server_files/DSSettings.txt" "$server_files/StarRupture/Binaries/Win64/DSSettings.txt"
+        
+        echo "DSSettings.txt updated and placed in server root and Binaries/Win64."
+      else
+        echo "No .sav files found in session '$session_name'. Cannot configure resume."
+      fi
+    else
+      echo "No savegame session folders found yet."
+    fi
   else
-    echo "No savegame subfolder found yet."
+    echo "Savegame directory does not exist yet: $savegame_files"
   fi
 fi
 
