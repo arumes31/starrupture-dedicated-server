@@ -1,6 +1,6 @@
 # Docker for a StarRupture dedicated server
 
-![Static Badge](https://img.shields.io/badge/GitHub-starrupture--dedicated--server-blue?logo=github) [![Docker Hub](https://img.shields.io/badge/Docker_Hub-starrupture--dedicated--server-blue?logo=docker)](https://hub.docker.com/r/struppinet/starrupture-dedicated-server)
+![Static Badge](https://img.shields.io/badge/GitHub-starrupture--dedicated--server-blue?logo=github)
 
 ## Table of contents
 - [Docker Run command](#docker-run)
@@ -24,7 +24,7 @@ This is a Docker container to help you get started with hosting your own [StarRu
 ## Getting started
 
 - Configure and start the container
-- Connect to the server via "Manage Server" in-game (you will need the IP address of the server, no DNS :( )
+- Connect to the server via "Manage Server" in-game (you will need the IP address of the server, no DNS :(" )
 - Set the password for the server and create a new session (new savegame) with optional a session password
 - If you set the USE_DSSETTINGS environment variable the scripts will add a DSSettings.txt which will auto-load the savegame on next restart of the server
 
@@ -35,11 +35,12 @@ docker run -d \
     --name starrupture \
     -p 7777:7777/udp \
     -p 7777:7777/tcp \
+    -p 27015:27015/udp \
     -v ./savegame:"/home/container/server_files/StarRupture/Saved/SaveGames" \
     -v ./server:"/home/container/server_files" \
     -e SERVER_PORT=7777 \
     -e USE_DSSETTINGS=true \
-    struppinet/starrupture-dedicated-server:latest
+    ghcr.io/arumes31/starrupture-dedicated-server:latest
 ```
 
 ## Docker Compose
@@ -48,17 +49,20 @@ docker run -d \
 services:
   starrupture:
     container_name: starrupture
-    image: struppinet/starrupture-dedicated-server:latest
+    image: ghcr.io/arumes31/starrupture-dedicated-server:latest
     network_mode: bridge
     environment:
       - SERVER_PORT=7777
       - USE_DSSETTINGS=true
+      - AUTO_UPDATE=true
+      - VALIDATE_FILES=true
     volumes:
       - './savegame:/home/container/server_files/StarRupture/Saved/SaveGames:rw'
       - './server:/home/container/server_files:rw'
     ports:
       - '7777:7777/udp'
       - '7777:7777/tcp'
+      - '27015:27015/udp'
     restart: unless-stopped
 ```
 
@@ -70,7 +74,8 @@ You can use these environment variables for your server settings:
 |----------------|---------|---------------------------------------------------------------------|
 | SERVER_PORT    | 7777    | The port that clients will connect to for gameplay                  |
 | USE_DSSETTINGS | false   | Set to true if you want a DSSettings.txt (auto-start) to be created |
+| AUTO_UPDATE    | true    | Set to false to skip SteamCMD update on startup (faster restart)    |
+| VALIDATE_FILES | true    | Set to false to skip file validation during update                  |
 
 ## Links
-Github [https://github.com/struppinet/starrupture-dedicated-server](https://github.com/struppinet/starrupture-dedicated-server)  
-Docker [https://hub.docker.com/r/struppinet/starrupture-dedicated-server](https://hub.docker.com/r/struppinet/starrupture-dedicated-server)
+Github [https://github.com/arumes31/starrupture-dedicated-server](https://github.com/arumes31/starrupture-dedicated-server)
