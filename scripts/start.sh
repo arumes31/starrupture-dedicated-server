@@ -53,6 +53,18 @@ if [ "${AUTO_UPDATE}" == "true" ] || [ "${AUTO_UPDATE}" == "1" ]; then
     "${cmd_flags[@]}"
     exit_code=$?
 
+    # Retry logic for exit code 8 (often corrupt manifest)
+    if [ $exit_code -eq 8 ]; then
+      echo " "
+      echo "SteamCMD failed with exit code 8 (often corrupt manifest)."
+      echo "Attempting to fix by removing appmanifest_3809400.acf and retrying..."
+      rm -f "$server_files/steamapps/appmanifest_3809400.acf"
+      
+      echo "Retrying update..."
+      "${cmd_flags[@]}"
+      exit_code=$?
+    fi
+
     if [ $exit_code -ne 0 ]; then
       echo " "
       echo "SteamCmd failed with exit code: $exit_code"
