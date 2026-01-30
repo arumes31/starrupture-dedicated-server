@@ -3,5 +3,7 @@
   "SaveGameInterval": "900",
   "StartNewGame": "false",
   "LoadSavedGame": "true",
-  "SaveGameName": "AutoSave0.sav"
+  "SaveGameName": "AutoSave0.sav",
+  "Password": "",
+  "PlayerPassword": ""
 }
