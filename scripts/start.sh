@@ -4,6 +4,11 @@ echo " "
 echo "Startup"
 echo " "
 
+# Check available disk space
+echo "Checking available disk space..."
+df -h /home/container
+echo " "
+
 server_files="/home/container/server_files"
 echo "server path: $server_files"
 mkdir -p "$server_files"
@@ -53,15 +58,29 @@ if [ "${AUTO_UPDATE}" == "true" ] || [ "${AUTO_UPDATE}" == "1" ]; then
     "${cmd_flags[@]}"
     exit_code=$?
 
-    # Retry logic for exit code 8 (often corrupt manifest)
+    # Retry logic for exit code 8 (often corrupt manifest or disk space 0x202)
     if [ $exit_code -eq 8 ]; then
       echo " "
-      echo "SteamCMD failed with exit code 8 (often corrupt manifest)."
-      echo "Attempting to fix by removing appmanifest_3809400.acf and retrying..."
+      echo "SteamCMD failed with exit code 8."
+      echo "Common causes: Corrupt manifest (0x6) or Insufficient Disk Space (0x202)."
+      echo "Checking disk space again:"
+      df -h /home/container
+      
+      echo "Attempting to fix by removing appmanifest_3809400.acf and retrying (without explicit validation)..."
       rm -f "$server_files/steamapps/appmanifest_3809400.acf"
       
+      # Retry without 'validate' keyword to be less aggressive, 
+      # though missing manifest implies some checking.
+      retry_flags=("${cmd_flags[@]}")
+      # Remove 'validate' if it exists in the array
+      for i in "${!retry_flags[@]}"; do
+        if [[ "${retry_flags[i]}" == "validate" ]]; then
+          unset 'retry_flags[i]'
+        fi
+      done
+      
       echo "Retrying update..."
-      "${cmd_flags[@]}"
+      "${retry_flags[@]}"
       exit_code=$?
     fi
 
