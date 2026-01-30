@@ -74,7 +74,9 @@ echo " "
 
 USE_DSSETTINGS=${USE_DSSETTINGS:-"false"}
 SERVER_PORT=${SERVER_PORT:-7777}
-echo "Using port: $SERVER_PORT"
+QUERY_PORT=${QUERY_PORT:-27015}
+echo "Using Game Port: $SERVER_PORT"
+echo "Using Query Port: $QUERY_PORT"
 
 if [[ "${USE_DSSETTINGS}" == "true" ]] || [[ "${USE_DSSETTINGS}" == "1" ]]; then
   echo "DSSettings handling enabled."
@@ -108,4 +110,4 @@ if [ ! -f "$EXE_PATH" ]; then
     echo "This is expected if AUTO_UPDATE was disabled on a fresh container."
 fi
 
-xvfb-run --auto-servernum wine "$EXE_PATH" -Log -port=$SERVER_PORT 2>&1
+xvfb-run --auto-servernum wine "$EXE_PATH" -Log -port=$SERVER_PORT -QueryPort=$QUERY_PORT 2>&1

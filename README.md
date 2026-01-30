@@ -39,6 +39,7 @@ docker run -d \
     -v ./savegame:"/home/container/server_files/StarRupture/Saved/SaveGames" \
     -v ./server:"/home/container/server_files" \
     -e SERVER_PORT=7777 \
+    -e QUERY_PORT=27015 \
     -e USE_DSSETTINGS=true \
     ghcr.io/arumes31/starrupture-dedicated-server:latest
 ```
@@ -53,6 +54,7 @@ services:
     network_mode: bridge
     environment:
       - SERVER_PORT=7777
+      - QUERY_PORT=27015
       - USE_DSSETTINGS=true
       - AUTO_UPDATE=true
       - VALIDATE_FILES=true
@@ -73,6 +75,7 @@ You can use these environment variables for your server settings:
 | Variable       | Default | Description                                                         |
 |----------------|---------|---------------------------------------------------------------------|
 | SERVER_PORT    | 7777    | The port that clients will connect to for gameplay                  |
+| QUERY_PORT     | 27015   | The port used for Steam server queries                              |
 | USE_DSSETTINGS | false   | Set to true if you want a DSSettings.txt (auto-start) to be created |
 | AUTO_UPDATE    | true    | Set to false to skip SteamCMD update on startup (faster restart)    |
 | VALIDATE_FILES | true    | Set to false to skip file validation during update                  |
