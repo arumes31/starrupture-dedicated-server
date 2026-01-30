@@ -65,6 +65,9 @@ echo " "
 echo "Launching StarRupture Dedicated Server"
 echo " "
 
+# Fix for SteamAPI_Init failed
+echo "3809400" > "$server_files/StarRupture/Binaries/Win64/steam_appid.txt"
+
 # RUN
 cd "$server_files"
 xvfb-run --auto-servernum wine $server_files/StarRupture/Binaries/Win64/StarRuptureServerEOS-Win64-Shipping.exe -Log -port=$SERVER_PORT 2>&1
