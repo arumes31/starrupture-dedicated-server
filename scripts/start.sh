@@ -14,11 +14,16 @@ echo "Installing Steam"
 echo " "
 
 steam_path=/home/container/steamcmd
-mkdir -p $steam_path
-curl -sSL -o $steam_path/steamcmd.tar.gz https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz
-tar -xzf $steam_path/steamcmd.tar.gz -C $steam_path
 steamcmd=$steam_path/steamcmd.sh
-echo "Steam ... OK"
+
+if [ ! -f "$steamcmd" ]; then
+    mkdir -p $steam_path
+    curl -sSL -o $steam_path/steamcmd.tar.gz https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz
+    tar -xzf $steam_path/steamcmd.tar.gz -C $steam_path
+    echo "Steam ... Installed"
+else
+    echo "Steam ... Already Installed"
+fi
 
 echo " "
 echo "Installing/Updating StarRupture Dedicated Server files..."
