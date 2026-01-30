@@ -6,7 +6,7 @@ echo " "
 
 # Check available disk space
 echo "Checking available disk space..."
-df -h /home/container
+df -h /home/container/server_files
 echo " "
 
 server_files="/home/container/server_files"
@@ -64,7 +64,7 @@ if [ "${AUTO_UPDATE}" == "true" ] || [ "${AUTO_UPDATE}" == "1" ]; then
       echo "SteamCMD failed with exit code 8."
       echo "Common causes: Corrupt manifest (0x6) or Insufficient Disk Space (0x202)."
       echo "Checking disk space again:"
-      df -h /home/container
+      df -h /home/container/server_files
       
       echo "Attempting to fix by removing appmanifest_3809400.acf and retrying (without explicit validation)..."
       rm -f "$server_files/steamapps/appmanifest_3809400.acf"
